@@ -6,17 +6,24 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+function parseEquation(eq) {
+  return eq.replace(/\^/g, '**');
+}
+
 function getFunction(eq) {
+  const parsed = parseEquation(eq);
   return function (x) {
-    const expr = eq.replace(/\bx\b/g, `(${x})`);
+    const expr = parsed.replace(/\bx\b/g, `(${x})`);
     return eval(expr);
   };
 }
 
 function bisection(f, a, b) {
+  if (f(a) * f(b) > 0) return null; // no root
   let mid;
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 100; i++) {
     mid = (a + b) / 2;
+    if (Math.abs(f(mid)) < 1e-10) return mid;
     if (f(a) * f(mid) < 0) b = mid;
     else a = mid;
   }
@@ -24,13 +31,16 @@ function bisection(f, a, b) {
 }
 
 function secant(f, x0, x1) {
-  for (let i = 0; i < 50; i++) {
-    let x2 = x1 - f(x1) * (x1 - x0) / (f(x1) - f(x0));
-    if (Math.abs(x2 - x1) < 0.0001) return x2;
+  for (let i = 0; i < 100; i++) {
+    let fx0 = f(x0);
+    let fx1 = f(x1);
+    if (Math.abs(fx1 - fx0) < 1e-14) return null;
+    let x2 = x1 - fx1 * (x1 - x0) / (fx1 - fx0);
+    if (Math.abs(x2 - x1) < 1e-10) return x2;
     x0 = x1;
     x1 = x2;
   }
-  return x1;
+  return null;
 }
 
 function newton(f, x0) {
@@ -38,12 +48,12 @@ function newton(f, x0) {
   for (let i = 0; i < 100; i++) {
     let fx = f(x);
     let dfx = (f(x + 1e-7) - f(x - 1e-7)) / (2e-7);
-    if (Math.abs(dfx) < 1e-12) break;
+    if (Math.abs(dfx) < 1e-12) return null;
     let x1 = x - fx / dfx;
-    if (Math.abs(x1 - x) < 1e-9) return x1;
+    if (Math.abs(x1 - x) < 1e-10) return x1;
     x = x1;
   }
-  return x;
+  return null;
 }
 
 app.post('/solve', (req, res) => {
