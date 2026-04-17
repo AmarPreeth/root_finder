@@ -24,6 +24,8 @@ function getFunction(eq) {
 }
 
 function bisection(f, a, b) {
+  if (Math.abs(f(a)) < 1e-10) return a;
+  if (Math.abs(f(b)) < 1e-10) return b;
   if (f(a) * f(b) > 0) return null;
   for (let i = 0; i < 1000; i++) {
     let mid = (a + b) / 2;
