@@ -14,7 +14,12 @@ function getFunction(eq) {
   const parsed = parseEquation(eq);
   return function (x) {
     const expr = parsed.replace(/\bx\b/g, `(${x})`);
-    return eval(expr);
+    return eval(`
+      const sin = Math.sin, cos = Math.cos, tan = Math.tan,
+            log = Math.log, sqrt = Math.sqrt, abs = Math.abs,
+            exp = Math.exp, PI = Math.PI;
+      ${expr}
+    `);
   };
 }
 
