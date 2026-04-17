@@ -24,11 +24,10 @@ function getFunction(eq) {
 }
 
 function bisection(f, a, b) {
-  if (f(a) * f(b) > 0) return null; // no root
-  let mid;
-  for (let i = 0; i < 100; i++) {
-    mid = (a + b) / 2;
-    if (Math.abs(f(mid)) < 1e-10) return mid;
+  if (f(a) * f(b) > 0) return null;
+  for (let i = 0; i < 1000; i++) {
+    let mid = (a + b) / 2;
+    if (Math.abs(f(mid)) < 1e-10 || Math.abs(b - a) < 1e-10) return mid;
     if (f(a) * f(mid) < 0) b = mid;
     else a = mid;
   }
