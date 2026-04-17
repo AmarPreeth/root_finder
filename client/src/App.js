@@ -40,10 +40,10 @@ export default function App() {
         })
       });
       const data = await res.json();
-      if (data.root !== undefined && !isNaN(data.root)) {
+      if (data.root !== null && data.root !== undefined && !isNaN(data.root)) {
         setResult(data.root);
       } else {
-        setError("Could not find root. Check inputs.");
+        setError("No root found. Check your inputs.");
       }
     } catch {
       setError("Server error. Is backend running?");
