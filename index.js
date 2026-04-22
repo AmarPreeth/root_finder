@@ -16,8 +16,9 @@ function getFunction(eq) {
     const expr = parsed.replace(/\bx\b/g, `(${x})`);
     return eval(`
       const sin = Math.sin, cos = Math.cos, tan = Math.tan,
-            log = Math.log, sqrt = Math.sqrt, abs = Math.abs,
-            exp = Math.exp, PI = Math.PI;
+            log = Math.log, log10 = Math.log10, log2 = Math.log2,
+            sqrt = Math.sqrt, abs = Math.abs,
+            exp = Math.exp, PI = Math.PI, e = Math.E;
       ${expr}
     `);
   };
